@@ -1,0 +1,38 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  PROJECT: movies_api
+
+tasks:
+
+  default:
+    cmds:
+      - task: install
+
+  install:
+    sources:
+      - pyproject.toml
+      - poetry.lock
+    cmds:
+      - poetry install
+
+  test:
+    sources:
+      - ./**/*.py
+    cmds:
+      - poetry run pytest --cov={{.PROJECT}} --cov-report=html --verbose
+
+  format:
+    sources:
+      - ./**/*.py
+    cmds:
+      - poetry run black .
+
+  lint:
+    sources:
+      - ./**/*.py
+    cmds:
+      - poetry run black --check .
+      - poetry run mypy --strict -p {{.PROJECT}}
