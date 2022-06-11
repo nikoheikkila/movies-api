@@ -21,8 +21,10 @@ tasks:
   test:
     sources:
       - ./**/*.py
+    deps:
+      - format
     cmds:
-      - poetry run pytest --cov={{.PROJECT}} --cov-report=html --verbose
+      - poetry run pytest --cov={{.PROJECT}} --cov-report=term --cov-report=html --verbose
 
   format:
     sources:
