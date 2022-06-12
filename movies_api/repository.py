@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 
 from movies_api.models import Movie, Base
 
@@ -31,13 +31,11 @@ class FakeMovieRepository(AbstractRepository[Movie]):
 
 
 class MovieRepository(AbstractRepository[Movie]):
-    session: Session
+    session: sessionmaker
 
     def __init__(self, engine: Engine) -> None:
-        factory = sessionmaker(bind=engine)
         Base.metadata.create_all(engine)
-
-        self.session = factory
+        self.session = sessionmaker(bind=engine)
 
     @classmethod
     def with_memory(cls) -> "MovieRepository":
@@ -51,6 +49,6 @@ class MovieRepository(AbstractRepository[Movie]):
     @property
     def items(self) -> list[Movie]:
         with self.session() as session:
-            rows = session.query(Movie).all()
+            rows: list[Movie] = session.query(Movie).all()
 
         return rows

@@ -11,8 +11,3 @@ class Movie(Base):
     name = Column(String(255), nullable=False)
     year = Column(Integer, nullable=False)
     rating = Column(Float, nullable=False)
-
-    def __init__(self, name: str, year: int, rating: float) -> None:
-        self.name = name
-        self.year = year
-        self.rating = rating
