@@ -11,10 +11,14 @@ T = TypeVar("T", bound=Base)
 
 
 class AbstractRepository(Generic[T]):
+    @property
+    def items(self) -> list[T]:
+        raise NotImplementedError  # pragma: no cover
+
     def insert(self, *items: T) -> list[T]:
         raise NotImplementedError  # pragma: no cover
 
-    def items(self) -> list[T]:
+    def delete(self, *items: T) -> None:
         raise NotImplementedError  # pragma: no cover
 
 
@@ -32,6 +36,10 @@ class FakeMovieRepository(AbstractRepository[Movie]):
         self.__items.extend(items)
         return list(items)
 
+    def delete(self, *items: Movie) -> None:
+        for item in items:
+            self.__items.remove(item)
+
 
 class MovieRepository(AbstractRepository[Movie]):
     engine: Engine
@@ -40,13 +48,20 @@ class MovieRepository(AbstractRepository[Movie]):
         self.engine = engine
         Base.metadata.create_all(self.engine)
 
+    @classmethod
+    def with_memory(cls) -> "MovieRepository":
+        return cls(engine=create_engine("sqlite:///:memory:"))
+
     @contextmanager
     def session(self) -> Generator[Session, None, None]:
         yield Session(self.engine)
 
-    @classmethod
-    def with_memory(cls) -> "MovieRepository":
-        return cls(engine=create_engine("sqlite:///:memory:"))
+    @property
+    def items(self) -> list[Movie]:
+        with self.session() as session:
+            rows: list[Movie] = session.query(Movie).all()
+
+        return rows
 
     def insert(self, *items: Movie) -> list[Movie]:
         with self.session() as session:
@@ -55,9 +70,9 @@ class MovieRepository(AbstractRepository[Movie]):
 
         return list(items)
 
-    @property
-    def items(self) -> list[Movie]:
+    def delete(self, *items: Movie) -> None:
         with self.session() as session:
-            rows: list[Movie] = session.query(Movie).all()
+            for item in items:
+                session.delete(item)  # type: ignore
 
-        return rows
+            session.commit()
