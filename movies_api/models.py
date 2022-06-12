@@ -1,3 +1,5 @@
+# type: ignore
+
 from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
