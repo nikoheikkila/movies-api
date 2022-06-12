@@ -37,4 +37,4 @@ tasks:
       - ./**/*.py
     cmds:
       - poetry run black --check .
-      - poetry run mypy --strict -p {{.PROJECT}}
+      - poetry run mypy -p {{.PROJECT}}
