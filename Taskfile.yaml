@@ -37,4 +37,4 @@ tasks:
       - ./**/*.py
     cmds:
       - poetry run black --check .
-      - poetry run mypy -p {{.PROJECT}}
+      - poetry run flake8 --show-source .
