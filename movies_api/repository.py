@@ -15,7 +15,7 @@ class AbstractRepository(Generic[T]):
     def items(self) -> list[T]:
         raise NotImplementedError  # pragma: no cover
 
-    def insert(self, *items: T) -> list[T]:
+    def insert(self, *items: T) -> None:
         raise NotImplementedError  # pragma: no cover
 
     def delete(self, *items: T) -> None:
@@ -32,9 +32,8 @@ class FakeMovieRepository(AbstractRepository[Movie]):
     def items(self) -> list[Movie]:
         return self.__items
 
-    def insert(self, *items: Movie) -> list[Movie]:
+    def insert(self, *items: Movie) -> None:
         self.__items.extend(items)
-        return list(items)
 
     def delete(self, *items: Movie) -> None:
         for item in items:
@@ -63,12 +62,10 @@ class MovieRepository(AbstractRepository[Movie]):
 
         return rows
 
-    def insert(self, *items: Movie) -> list[Movie]:
+    def insert(self, *items: Movie) -> None:
         with self.session() as session:
             session.add_all(items)
             session.commit()
-
-        return list(items)
 
     def delete(self, *items: Movie) -> None:
         with self.session() as session:

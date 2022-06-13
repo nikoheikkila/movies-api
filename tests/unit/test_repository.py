@@ -32,8 +32,9 @@ class TestMovieRepository:
         repository.insert(movie)
 
         repository.delete(movie)
+        items = repository.items
 
-        assert_that(repository.items).is_empty()
+        assert_that(items).is_empty()
 
     def test_remove_many(self) -> None:
         repository = MovieRepository.with_memory()
@@ -42,5 +43,6 @@ class TestMovieRepository:
         repository.insert(movie1, movie2)
 
         repository.delete(movie1, movie2)
+        items = repository.items
 
-        assert_that(repository.items).is_empty()
+        assert_that(items).is_empty()

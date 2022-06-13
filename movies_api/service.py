@@ -12,8 +12,8 @@ class MovieService:
     def __init__(self, repository: AbstractRepository[Movie]) -> None:
         self.repository = repository
 
-    def add_movies(self, *movies: Movie) -> list[Movie]:
-        return self.repository.insert(*movies)
+    def add_movies(self, *movies: Movie) -> None:
+        self.repository.insert(*movies)
 
     def remove_movies(self, *movies: Movie) -> None:
         try:
