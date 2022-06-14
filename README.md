@@ -18,7 +18,92 @@ The behaviour of aggregate and its related service is described in detail under 
 
 ### Class Diagram
 
-_to be added here..._
+```mermaid
+classDiagram
+    direction LR
+
+    class API {
+        <<REST>>
+        service: MovieService
+
+        healthcheck() HealthCheckResponse
+        add_movies(request: AddMoviesRequest) AddMoviesResponse
+    }
+
+    API --> MovieService : injects
+    API --> HealthCheckResponse : returns
+    API --> AddMoviesRequest : accepts
+    API --> AddMoviesResponse : returns
+
+    class HealthCheckResponse {
+        code: int
+    }
+
+    class AddMoviesRequest {
+        name: str
+        year: int
+        rating: float
+    }
+
+    class AddMoviesResponse {
+        success: boolean
+        movies: List~str~
+    }
+
+    class MovieService {
+        repository: AbstractRepository~Movie~
+
+        add_movies(movies: Tuple~Movie~) None
+        remove_movies(movies: Tuple~Movie~) None
+        list() List~Movie~
+    }
+
+    MovieService --> MovieRepository : production
+    MovieService --> FakeMovieRepository : testing
+    MovieService --o Movie
+
+    class Movie {
+        <<Model>>
+        id: int
+        name: str
+        year: int
+        rating: float
+    }
+
+    class AbstractRepository~T~ {
+        <<interface>>
+        items() List~T~
+        insert(items: Tuple~T~) None
+        delete(items: Tuple~T~) None
+    }
+
+    class FakeMovieRepository {
+        items: List~Movie~
+
+        items() List~Movie~
+        insert(items: Tuple~Movie~) None
+        delete(items: Tuple~Movie~) None
+    }
+
+    FakeMovieRepository --|> AbstractRepository
+
+    class MovieRepository {
+        engine: Engine
+
+        with_memory() MovieRepository
+        session() Generator~Session~
+        items() List~Movie~
+        insert(items: Tuple~Movie~) None
+        delete(items: Tuple~Movie~) None
+    }
+
+    MovieRepository --|> AbstractRepository
+    MovieRepository --> SQLite : read/write
+
+    class SQLite {
+        <<Database>>
+    }
+```
 
 ### Frameworks
 
