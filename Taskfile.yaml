@@ -12,6 +12,7 @@ tasks:
       - task: install
 
   install:
+    desc: Install Python dependencies
     sources:
       - pyproject.toml
       - poetry.lock
@@ -19,6 +20,7 @@ tasks:
       - poetry install
 
   test:
+    desc: Run application test suite
     sources:
       - ./**/*.py
     deps:
@@ -27,12 +29,14 @@ tasks:
       - poetry run pytest --cov={{.PROJECT}} --cov-report=term --cov-report=html --verbose
 
   format:
+    desc: Format the codebase
     sources:
       - ./**/*.py
     cmds:
       - poetry run black .
 
   lint:
+    desc: Lint the codebase for style issues
     sources:
       - ./**/*.py
     cmds:
@@ -40,10 +44,14 @@ tasks:
       - poetry run flake8 --show-source .
 
   dev:
+    desc: Run the development server on localhost:{{.PORT}}
     cmds:
-      - poetry run uvicorn main:app --reload
+      - poetry run uvicorn main:app --reload --port {{.PORT}}
+    vars:
+      PORT: 8000
 
   docs:
+    desc: Generate the OpenAPI documentation (run `task dev` first)
     dir: docs
     interactive: true
     cmds:
