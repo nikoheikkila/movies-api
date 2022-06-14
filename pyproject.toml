@@ -20,6 +20,7 @@ flake8 = "^4.0.1"
 coverage = "^6.4.1"
 types-SQLAlchemy = "^1.4.38"
 sqlalchemy-stubs = "^0.4"
+uvicorn = "^0.17.6"
 
 [tool.black]
 line-length = 120
